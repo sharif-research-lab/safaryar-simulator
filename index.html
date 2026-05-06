@@ -693,11 +693,28 @@
         function ans(currentIndex, questionId, value, elem) { 
             userResponses[questionId] = value;
             
-            if(elem && !elem.classList.contains('bg-blue-600')) {
+            if(elem) {
+                // 1. پاک کردن رنگ آبی از تمام گزینه‌های همان سوال (برای جلوگیری از تداخل)
+                let siblings = elem.parentElement.children;
+                for(let i = 0; i < siblings.length; i++) {
+                    siblings[i].style.backgroundColor = '';
+                    siblings[i].style.color = '';
+                    siblings[i].style.borderColor = '';
+                }
+                
+                // 2. اعمال رنگ آبی فقط به گزینه انتخاب شده فعلی
                 elem.style.backgroundColor = '#2563eb';
                 elem.style.color = '#fff';
                 elem.style.borderColor = '#2563eb';
-                setTimeout(() => { goNext(currentIndex); }, 300);
+                
+                // 3. غیرفعال کردن موقت کلیک در کل آن سوال (برای جلوگیری از دوبار کلیک و پرش)
+                let questionDiv = document.getElementById('survey-q-' + currentIndex);
+                questionDiv.style.pointerEvents = 'none';
+                
+                setTimeout(() => { 
+                    goNext(currentIndex); 
+                    questionDiv.style.pointerEvents = 'auto'; // فعال کردن مجدد برای زمانی که کاربر با دکمه بازگشت برمی‌گردد
+                }, 300);
             } else {
                 goNext(currentIndex);
             }
